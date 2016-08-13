@@ -1,0 +1,36 @@
+//add
+private XmlElement SerializeNode(TreeNode node, XmlElement root, XmlDocument document)
+        {
+            XmlElement elem = document.CreateElement("node");
+            XmlAttribute attr = document.CreateAttribute("tag");
+            XmlAttribute val = document.CreateAttribute("val");
+            val.InnerText = node.Text;
+            attr.InnerText = node.Tag == null ? "" : node.Tag.ToString();
+            elem.Attributes.Append(attr);
+            elem.Attributes.Append(val);
+            for (int i = 0; i < node.Nodes.Count; i++)
+                elem.AppendChild(SerializeNode(node.Nodes[i], elem, document));
+            return elem;
+        }
+  //extract
+    public void Deserialize(string fileName)
+        {
+            if (fileName == null)
+                throw new ArgumentNullException("fileName");
+            this.treeView1.Nodes.Clear();
+            XmlDocument document = new XmlDocument();
+            document.Load(fileName);
+            var root = document.DocumentElement;
+            for (int i = 0; i < root.ChildNodes.Count; i++)
+                treeView1.Nodes.Add(DeseializeNode(root.ChildNodes[i]));
+        }
+
+        private TreeNode DeseializeNode(XmlNode element)
+        {
+            TreeNode treeNode = new TreeNode();
+            treeNode.Text = element.Attributes["val"].Value;
+            treeNode.Tag = element.Attributes["tag"].Value;
+            for (int i = 0; i < element.ChildNodes.Count; i++)
+                treeNode.Nodes.Add(DeseializeNode(element.ChildNodes[i]));
+            return treeNode;
+        }
