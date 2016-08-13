@@ -1,0 +1,20 @@
+//wrt txt on frm
+Form frm = (Form)obj;
+            PaintEventArgs peargs = (PaintEventArgs)args;
+            Graphics grfx = peargs.Graphics;
+
+            grfx.DrawString("HELLO!", frm.Font, SystemBrushes.InfoText,  20, 20);
+
+//some events
+  frm.Click += new EventHandler(FormClicker);
+    frm.ClientSizeChanged += new EventHandler(FormSizeChanger);
+  frm.Paint+= new PaintEventHandler(FormPainter);
+  
+   static void FormSizeChanger(object obj, EventArgs args)
+        {  
+            Form frm = (Form)obj;
+
+            Console.WriteLine("Form with caption \"{0}\" SizeChanged", frm.Text);
+        }
+        
+  
