@@ -1,0 +1,236 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+namespace Texteditor
+{
+    public partial class Form1 : Form
+    {
+        private void Open()
+        {
+            ToolStripMenuItem.Enabled = true;
+            зберегтиToolStripMenuItem.Enabled = true;
+            toolStripButton2.Enabled = true;
+        }
+        private void Return()
+        {
+            ToolStripMenuItem.Enabled = false;
+            зберегтиToolStripMenuItem.Enabled = false;
+            toolStripButton2.Enabled = false;
+        }
+        public Form1()
+        {
+            InitializeComponent();
+
+            richTextBox1.ContextMenuStrip = contextMenuStrip1;
+              
+        }
+        public string path;
+        public string buffer;
+        public RichTextBox richtextBox1;
+
+        private void відкритиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+            op.Filter = "All Files(*.*)|*.*|Text Files(*.txt)|*.txt|XML Files(*.xml)|*.xml||";
+            op.FilterIndex = 2;
+            op.ShowReadOnly = true;
+
+
+            if (op.ShowDialog() == DialogResult.OK)
+            {
+                //Stream fs = op.OpenFile();
+                FileStream fs = new FileStream(op.FileName, FileMode.Open, FileAccess.Read);
+                StreamReader reader = new StreamReader(fs);
+                path = op.FileName;
+                richTextBox1.Text = reader.ReadToEnd();
+                this.Text = path;
+                Open();
+                reader.Close();
+                
+            }
+        }
+
+        private void зберегтиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            StreamWriter streamWriter = new StreamWriter(path);
+            streamWriter.WriteLine(richTextBox1.Text);
+            streamWriter.Close();
+        }
+
+        private void зберегтиЯкToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Текстовый документ (*.txt)|*.txt|Все файлы (*.*)|*.*";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                StreamWriter streamWriter = new StreamWriter(saveFileDialog.FileName);
+                streamWriter.WriteLine(richTextBox1.Text);
+                streamWriter.Close();
+            }
+        }
+
+        private void новийДокументToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog ops = new SaveFileDialog();
+            ops.Filter = "Текстовый документ (*.txt)|*.txt";
+            Open();
+            зберегтиToolStripMenuItem.Enabled = false;
+        }
+
+       /////////////////////////////////////////////////////////////
+        private void виділитиВсеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Select(0,richTextBox1.Text.Length);
+            richTextBox1.Focus();
+        }
+
+        private void копіюватиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buffer = richTextBox1.SelectedText;
+        }
+
+        private void вставитиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RichTextBox richtextBox1 = (RichTextBox)this.ActiveControl;
+            int pos = richTextBox1.SelectionStart;
+            richtextBox1.Text = richtextBox1.Text.Insert(pos, buffer);
+            richTextBox1.Focus();
+            richTextBox1.SelectionStart = pos;
+            richTextBox1.SelectionLength = buffer.Length;
+        }
+
+        private void вирізатиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buffer = richTextBox1.SelectedText;
+            richtextBox1 = (RichTextBox)this.ActiveControl;
+            int pos = richTextBox1.SelectionStart;
+            richtextBox1.Text = richtextBox1.Text.Remove(pos, buffer.Length);
+            richTextBox1.Focus();
+            richTextBox1.SelectionStart = pos;
+            richTextBox1.SelectionLength = buffer.Length;
+        }
+
+        private void відмінитиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
+            Return();
+
+        }
+
+        private void колірШрифтуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog1 = new ColorDialog();
+
+            // Set the initial color of the dialog to the current text color.
+            colorDialog1.Color = richTextBox1.SelectionColor;
+
+            // Determine if the user clicked OK in the dialog and that the color has changed.
+            if (colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
+               colorDialog1.Color != richTextBox1.SelectionColor)
+            {
+                // Change the selection color to the user specified color.
+                richTextBox1.SelectionColor = colorDialog1.Color;
+            }
+        }
+
+        private void колірФонуToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog1 = new ColorDialog();
+            if (colorDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
+               colorDialog1.Color != richTextBox1.SelectionColor)
+            {
+                richTextBox1.BackColor = colorDialog1.Color;
+            }
+        }
+
+        private void шрифтToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            fontDialog1.Font = richTextBox1.SelectionFont;
+            if (fontDialog1.ShowDialog() == DialogResult.OK)
+            {
+                richTextBox1.SelectionFont = fontDialog1.Font;
+            }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            відкритиToolStripMenuItem_Click(sender,e);
+            Open();
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            зберегтиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            новийДокументToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            копіюватиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            вирізатиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            вставитиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+            відмінитиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("шрифт");
+            шрифтToolStripMenuItem_Click(sender, e);
+            MessageBox.Show("колірШрифту");
+            колірШрифтуToolStripMenuItem_Click(sender, e);
+            MessageBox.Show("колірФону");
+            колірФонуToolStripMenuItem_Click(sender, e);
+
+        }
+
+        private void копіюватиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            копіюватиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void вирізатиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            вирізатиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void вставитиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            вставитиToolStripMenuItem_Click(sender, e);
+        }
+
+        private void відмінитиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            відмінитиToolStripMenuItem_Click(sender, e);
+        }
+
+
+
+    }
+}
