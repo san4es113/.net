@@ -1,5 +1,21 @@
 //add
-private XmlElement SerializeNode(TreeNode node, XmlElement root, XmlDocument document)
+    public void Serialize(string fileName)
+        {
+            if (fileName == null)
+                throw new ArgumentNullException("fileName");
+            if (this.treeView1 == null)
+                throw new NullReferenceException("TreeView can not be null");
+            XmlDocument document = new XmlDocument();
+            var declaration = document.CreateXmlDeclaration("1.0", "utf-8", null);
+            document.AppendChild(declaration);
+            var root = document.CreateElement("treeview");
+            document.AppendChild(root);
+            for (int i = 0; i < this.treeView1.Nodes.Count; i++)
+                root.AppendChild(SerializeNode(this.treeView1.Nodes[i], root, document));
+            document.Save(fileName);
+        }
+
+        private XmlElement SerializeNode(TreeNode node, XmlElement root, XmlDocument document)
         {
             XmlElement elem = document.CreateElement("node");
             XmlAttribute attr = document.CreateAttribute("tag");
