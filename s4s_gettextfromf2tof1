@@ -1,0 +1,20 @@
+//form2
+public partial class Form2 : Form
+    {
+        public string GetText()
+        {
+            return richTextBox1.Text;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+        }
+    }
+    //form1
+    
+    
+            Form2 f2 = new Form2();
+            if (f2.ShowDialog() == DialogResult.OK)
+            {
+               helloStr = f2.GetText();
+            }
